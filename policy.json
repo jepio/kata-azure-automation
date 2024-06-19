@@ -1,0 +1,56 @@
+{
+  "properties": {
+    "displayName": "Add creation timestamp tag on resources",
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Tags"
+    },
+    "version": "1.0.0",
+    "parameters": {
+      "tagName": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Tag Name",
+          "description": "Name of the tag, such as 'environment'"
+        }
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.ContainerService/managedClusters"
+          },
+          {
+            "field": "[concat('tags[', parameters('tagName'), ']')]",
+            "exists": "false"
+          }
+        ]
+      },
+      "then": {
+        "effect": "modify",
+        "details": {
+          "roleDefinitionIds": [
+            "/providers/microsoft.authorization/roleDefinitions/4a9ae827-6dc8-4573-8ac7-8239d42aa03f"
+          ],
+          "operations": [
+            {
+              "operation": "add",
+              "field": "[concat('tags[', parameters('tagName'), ']')]",
+              "value": "[utcNow()]"
+            }
+          ]
+        }
+      }
+    },
+    "versions": [
+      "1.0.0"
+    ]
+  },
+  "id": "/subscriptions/2efae366-54ff-4d92-b51e-7454e50408e3/providers/Microsoft.Authorization/policyDefinitions/823e7794-788f-40af-83d5-3cac7eb934a5",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "name": "823e7794-788f-40af-83d5-3cac7eb934a5",
+}
